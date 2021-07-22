@@ -1,0 +1,217 @@
+데이터베이스(DataBase)
+Data:자료
+DataBase:저장소, 데이터를 통합하여 관리하는 집합체
+
+데이터베이스 관리 시스템(DBMS)
+-데이터 베이스를 관리해주는 소프트웨어를 의미한다.
+
+데이터베이스 관리 시스템을 사용하는 이유
+-중복된 데이터를 제거하기 위해서
+-자료를 구조화시킬 수 있다.
+-효율적인 처리를 할 수 있다.
+-다양한 프로그램을 사용하는 사용자들과 데이터를 공유할 수 있다.
+
+SQL(Structured Query Language)
+-데이터베이스에서 데이터를 정의, 조작, 제어하기 위해 사용하는 언어
+-대소문자 구별하지 않음
+-문자열을 저장할 때 ' '(싱글 따옴표)만 사용
+
+데이터베이스(Database)
+ 		-> 테이블(엑셀과 비슷)
+		-> 열: 필드, 컬럼, 어트리뷰트
+		-> 행: 로우,레코드
+
+데이터베이스를 확인하는 문법
+SHOW DATABASES;
+
+데이터베이스 생성 문법
+CREATE DATABASE 데이터베이스명;
+예) CREATE DATABASE jcp;
+
+데이터베이스를 사용하겠다(이 명령을 내리고 테이블에 접속해야함)
+USE 데이터베이스명;
+USE jcp;
+
+데이터베이스 삭제 문법
+DROP DATABASE 데이터베이스명;
+DROP DATABASE jcp;
+
+테이블(Table)
+-데이터를 행과 열로 스키마에 따라 저장할 수 있는 구조
+-데이블 생성 문법
+CREATE TABLE 테이블명(
+
+	필드명1 필드타입 제약조건,
+	필드명2 필드타입 제약조건.,
+	......
+	필드명N 필드타입 제약조건,
+)
+
+*스키마: 데이터베이스의 구조와 제약조건에 관한 명세를 기술한 집합을 의미
+*제약조건: 테이블을 만들때 이런식으로 만들었으면 좋겠어. 라고 명세를 기술한 것
+
+데이터 타입
+1.숫자타입
+-정수: int, bigint
+-소수: float(소수점 6쨰자리 까지), double(그 이상)
+
+2.문자열 타입
+-텍스트: char, varchar(65535byte), text(그 이상일 떄 사용)
+	char(20) --> 1byte만 저장하더라도 총 20byte를 소모
+	varchar(20) --> 1byte를 저장하면 총 1byte만 소모. 따라서 이게 더 효율적
+-바이너리(이미지코드, 동영상코드 등 디지털화된 코드들이 저장됨):binary, varbinary
+데이터베이스는 메모리를 굉장히 많이 사용하기 때문에 이미지보다 글자를 저장시킴.
+바이너리에 어쩔 수 없이 서비스 하는 경우도 있다.(네이버의 음성으로 음악검색하는 것)
+-열거타입: enum
+	enum('남','여') -->가로 안에 써준 내용만 저장이 가능하다.
+
+3. 날짜와 시간타입
+-날짜: date
+-날짜외 시간타입: datetime, timestamp(1970년 1월1일 0시0분0초~) 천분의1초씩 늘어남
+
+제약조건
+-데이터의 무결성을 지키기 위해 데이터를 입력받을 때 실행하는 검사 규칙
+
+1. NOT NULL: 필드(열)에 NULL값을 저장할 수 없다.
+2. UNIQUE: 중복된 값을 저장할 수 없다. 단, NULL값은 허용
+3. DEFAULT: 기본값을 설정할 때 사용
+4. AUTO_INCREMENT: 자동으로 숫자가 증가되어 추가됨. 중복값이 저장되지 않음. 
+		    직접 데이터를 추가할 수 없음
+5.PRIMARY KEY: 기본키로 설정.테이블에 오직 하나의 필드에만 적용가능.
+	         UNIQUE 제약과 NOT NULL제약을 동시에 가짐
+	         검색할 일이 생길 경우 데이터를 쉽고 빠르게 찾을 수 있게 설정
+	         외래키가 참조할 수 있도록 설정
+6.FOREIGN KEY: 외래키(참조). 다른 테이블과 연결해주는 역할
+	         기준이 되는 테이블의 내용을 참조해서 레코드가 입력
+	         PRIMARY KEY를 참조
+
+테이블 만들기
+CREATE TABLE tb_memeber(
+
+	meme_idx BIGINT AUTO_INCREMENT PRIMARY KEY, //auto_increment를 사용할 땐 프라이머리 키가 필수
+	mem_userid VARCHAR(20) UNIAUE NOT NULL,
+	mem_userpw VARCHAR(20) NOT NULL,
+	mem_name VARCHAR(20) NOT NULL,
+	mem_hp VARCHAR(20) NOT NULL,
+	mem_ssn1 CHAR(6) NOT NULL, //주민번호는 무조건 6자를 넣어야 한다는 의미
+	mem_email VARCHAR(50) NOT NULL,
+	mem_hobby VARCHAR(20),
+	mem_ssn2 char(7) not null,
+	mem_zipcode char(5),
+	mem_address1 varchar(100),
+	mem_address2 varchar(100),
+	mem_address3 varchar(100),
+	mem_regdate datetime default now()
+);
+
+테이블 구조 확인
+DESC 테이블명;
+
+테이블 삭제
+DROP TABLE 테이블명;
+
+테이블에 필드 추가
+
+ALTER TABLE 테이블명 ADD 컬럼명 컬럼타입 제약조건;
+ALTER TABLE tb_member ADD mem_point INT DEFAULT 0;
+
+테이블 필드 수정
+ALTER TABLE 테이블명 MODIFY COLUMN  컬럼타입 제약조건;
+
+테이블 필드 삭제
+
+데이터 삽입(INSERT)
+-INSERT INTO 테이블명 VALUES(값1, 값2, 값3...); //모든 코드에 값이 다 들어가 있을 떄만 사용 가능
+-INSERT INTO 테이블명(필드명1, 필드명2,...) VALUES(값1,값2)
+IINSERT INTO tb_member (mem_userid, mem_userpw, mem_name, mem_hp, mem_email, mem_hobby, mem_ssn1, mem_ssn2, mem_zipcode, mem_address1, mem_address2, mem_address3) VALUES ('apple', '1111', '김사과', '010-1111-1111', 'apple@apple.com', '드라이브', '001011', '4068512', '12345', '서울 서초구 양재동', '11-11', '11111');
+
+데이터 수정(UPDATE)
+1. UPDATE 테이블명 SET 필드1=값1, 필드2=값2...
+모든 사람의 데이터가 바뀜
+UPDATE tb_member SET mem_hobby ='운동';
+2.UPDATE 테이블명 SET 필드1=값1,필드2= 값2 .... WHERE 조건절;
+UPDATE tb_member SET mem_hobby ='운동' WHERE mem_userid = 'apple';
+
+데이터 삭제(DELETE)
+1.DELETE FROM 테이블명; //데이터가 다 날라감
+DELETE FROM tb_member;
+
+2.DELETE FROM 테이블명 WHERE 조건절;
+DELETE FROM tb_member WHERE mem_userid ='apple';;
+
+실습
+자바 예제 중 '영어단어'를 테이블로 설계한다면 어떻게 해야하는지 작성.
+번호// 영어단어// 한글 뜻// 레벨
+
+CREATE TABLE tb_word(
+number BIGINT AUTO_INCREMENT PRIMARY KEY,
+eng_word VARCHAR(30) NOT NULL,
+kor_word VARCHAR(30) NOR NULL,
+word_level INT NOT NULL
+w_datetime datetime default now()
+);
+DESC tb_word; 
+
+INSERT INTO tb_word(eng_word,kor_word,word_level) VALUES('apple','사과','1');
+SELECT * FROM tb_word;
+
+SQL 연산자
+1.산술 연산자
++,-,*,/,div(왼쪽 연산자를 오른쪽 연산자로 나눈 후 소수부분을 버임), mod(나머지 연산)
+
+2.대입 연산자
+ 	=
+3.비교 연산자
+	=(같다), <>(다르다), <,>,<=,>=,is(왼쪽 피연산자와 오른쪽 피연산자가 같으면 참), 
+is not(왼쪽 피연산자와 오른쪽 피연산자가 다르면 참), between A and B(값이 A보다는 크거나 같고, B보다는 작거나 같으면
+참을 반환), in() (연산자의 값이 인수로 전달받은 리스트에 존재하면 참을 반환)
+
+4.논리연산자
+	AND,OR,XOR,NOT
+
+검색(SELECT)
+-SELECT 필드명1, 필드명2,...FROM 테이블명;
+SELECT mem_idx, mem_userid, mem_name From tb_member;
+
+-select 필드명1,필드명2, ... from 테이블명 where 조건절;
+SELECT mem_idx, mem_userid, mem_name From tb_member where mem_idx=2;
+
+정렬
+-select 필드명1 , 필드명2, ... from 테이블명 oder by 정렬한 필드(asc,desc)
+select*from tb_member order by mem_idx asc; 오름차순은 asc 생략가능
+select*from tb_member order by mem_idx desc; 
+
+그룹
+-select 그룹을 맺은 필드 또는 집계함수 from 테이블명 group by 필드;
+select count(mem_idx) from to_member group by mem_gender; 
+
+집계함수
+-count(): 데이터의 개수
+-sum():합계
+-max():최대값
+-min():최소값
+-avg(): 평균
+
+*별명을 주는 방법(필드명 만들기)
+필드 as 별명
+select mem_gender, count(mem_idx) as '명' from tb_member group by mem_gender;
+
+테이블 병합(JOIN)
+데이터베이스 내의 여러 테이블에서 가져온 레코드를 조합하여 하나의 테이블이나 결과집합으로 표현
+
+select 컬럼명1, 컬럼명2,... from 테이블1(inner,left,right)join 테이블2 on 테이블1.필드명 = 테이블2. 필드명
+select mem_idx, mem_userid, mem_name, pro_gender,pro_height,pro_weight From tb_member inner join tb_profile 
+on tb_member.mem_idx = tb_profile.pro_useridx;
+
+(LEFT: 첫 테이블 중심-왼쪽)
+select mem_idx, mem_userid, mem_name, pro_gender,pro_height,pro_weight From tb_member left join tb_profile 
+on tb_member.mem_idx = tb_profile.pro_useridx;
+
+(RIGHT: 두번째 테이블 중심-오른쪽)
+select mem_idx, mem_userid, mem_name, pro_gender,pro_height,pro_weight From tb_member right join tb_profile 
+on tb_member.mem_idx = tb_profile.pro_useridx;
+
+
+
+
+
